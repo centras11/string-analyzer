@@ -46,7 +46,7 @@ class AnalyzeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $fileName = $input->getArgument('filename');
-        $environment = ucfirst($input->getArgument('environment'));
+        $environment = $input->getArgument('environment');
         $count = $input->getArgument('count');
         $group = $input->getArgument('group');
 

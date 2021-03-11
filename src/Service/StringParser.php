@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Analyzer\Service;
 
 use Analyzer\Service\EnvironmentRule\RuleInterface;
-use Analyzer\Service\EnvironmentRule\Text;
 use Exception;
 
 /**
@@ -15,6 +14,21 @@ use Exception;
 class StringParser
 {
     private const UPLOAD_FOLDER = '/upload/';
+
+    /**
+     * @param string $fileName
+     * @param string $environment
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function getDataForAnalyze(string $fileName, string $environment): array
+    {
+        $text = $this->readFile($fileName);
+        $environmentRule = $this->getEnvironmentRule($environment);
+
+        return $environmentRule->getEnvironment($text);
+    }
 
     /**
      * @param string $fileName
@@ -45,33 +59,13 @@ class StringParser
     {
         $environmentWithNameSpace = 'Analyzer\\Service\\EnvironmentRule\\' . $environment;
 
-        if (!class_exists($environmentWithNameSpace )) {
+        if (!class_exists($environmentWithNameSpace)) {
+            // @todo throw custom exception
             throw new Exception('Not supported environment: ' . $environment);
         }
 
-        return new $environmentWithNameSpace;
+        $r = new $environmentWithNameSpace();
 
-//        $r1 = class_exists('Analyzer\\Service\\EnvironmentRule\\' . $environment, false);
-//        $r2 = class_exists('\\Analyzer\\Service\\EnvironmentRule\\' . $environment, false);
-//        $r3 = class_exists('\Analyzer\Service\EnvironmentRule\\' . $environment, false);
-//        $r4 = class_exists("\Analyzer\Service\EnvironmentRule\{$environment}", false);
-//        $r5 = class_exists("Analyzer\Service\EnvironmentRule\{$environment}", false);
-//
-//        return new Text();
-    }
-
-    /**
-     * @param string $fileName
-     * @param string $environment
-     *
-     * @return array
-     * @throws Exception
-     */
-    public function getDataForAnalyze(string $fileName, string $environment): array
-    {
-        $text = $this->readFile($fileName);
-        $environmentRule = $this->getEnvironmentRule($environment);
-
-        return $environmentRule->getEnvironment($text);
+        return new $environmentWithNameSpace();
     }
 }
