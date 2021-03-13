@@ -1,17 +1,22 @@
-# Commission task 
+# String Analyzer
 
 Steps to run:
 - install dependencies using composer `composer install`;
-- run command `php public/index.php` to count commission;
-- put your custom data file `public/upload` folder and add file name then running command `php public/index.php filename.csv`. If file is not provided - script will use default `sample.csv`;
+- run command `php public/index.php`;
+- 4 parameters can be passed to command:
+  * path to data file (`public/upload/sample.txt` used by default),
+  * the environment to analyze - `text` or `line`,
+  * what to count - `word` or `symbol`,
+  * how to group results. Supported: `max`, `asc`.
 - run `php bin/phpunit` to run tests;
 
 About solution:
-- for each data row we calculate key for easy search - `userId + year + week number`;
-- extra logic was added for counting year, because of ISO standards first and last weeks can overlap between years: https://en.wikipedia.org/wiki/ISO_week_date#First_week;
-- the rule for counting commissions is selected based on row parameters;
-- every commission counting case has own logic on `Rule` folder, extending `RuleInterface`;
+- provided text is split into sentences by environment;
+- if analyzing `lines` only fully fitting into line sentences are analyzed;
+- all analyzing sentences are saved to multidimensional array with count;
+- view layer sorts results by custom logic and outputs; 
 
 Some Todos left:
-- throw custom exception in Converter if not supported currency supplied; 
-- getting currency rates mocked for simplicity - should be added any client which do curl to external API;
+- throw custom exception if Class not exists; 
+- some code miss tests;
+- improve naming;
