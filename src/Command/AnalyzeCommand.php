@@ -6,10 +6,10 @@ namespace Analyzer\Command;
 
 use Analyzer\Service\Analyzer;
 use Analyzer\Service\StringParser;
+use Analyzer\View\AnalyzerView;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -27,8 +27,8 @@ class AnalyzeCommand extends Command
             ->setHelp('Analyzes string by collecting some statistic')
             ->addArgument('filename', InputArgument::OPTIONAL, 'The name of file to analyze.', 'sample.txt')
             ->addArgument('environment', InputArgument::OPTIONAL, 'The environment to analyze - text or line.', 'text')
-            ->addArgument('count', InputArgument::OPTIONAL, 'What to count - words or symbols.', 'word')
-            ->addArgument('group', InputArgument::IS_ARRAY, 'How to group results.')
+            ->addArgument('count', InputArgument::OPTIONAL, 'What to count - word or symbol.', 'word')
+            ->addArgument('group', InputArgument::IS_ARRAY, 'How to group results. Supported: max, asc', ['max', 'asc'])
         ;
     }
 
@@ -44,6 +44,13 @@ class AnalyzeCommand extends Command
         parent::__construct();
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     *
+     * @return int|null
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $fileName = $input->getArgument('filename');
@@ -51,19 +58,10 @@ class AnalyzeCommand extends Command
         $count = ucfirst($input->getArgument('count'));
         $group = $input->getArgument('group');
 
-        $r = $this->analyzer->analyze($fileName, $environment, $count);
+        $data = $this->analyzer->analyze($fileName, $environment, $count);
+        $view = new AnalyzerView($input, $output);
+        $view->view($data, $group);
 
-        // ... put here the code to create the user
-
-        // this method must return an integer number with the "exit status code"
-        // of the command. You can also use these constants to make code more readable
-
-        // return this if there was no problem running the command
-        // (it's equivalent to returning int(0))
         return Command::SUCCESS;
-
-        // or return this if some error happened during the execution
-        // (it's equivalent to returning int(1))
-        // return Command::FAILURE;
     }
 }
