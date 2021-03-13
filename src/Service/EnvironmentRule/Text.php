@@ -8,7 +8,7 @@ namespace Analyzer\Service\EnvironmentRule;
  * Class Text
  * @package Analyzer\Service\EnvironmentRule
  */
-class Text implements RuleInterface
+class Text implements EnvironmentRuleInterface
 {
     private string $rule = '/\p{Lu}.*?\./su';
 

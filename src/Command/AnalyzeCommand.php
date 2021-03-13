@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Analyzer\Command;
 
 use Analyzer\Service\Analyzer;
+use Analyzer\Service\StringParser;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -38,7 +39,7 @@ class AnalyzeCommand extends Command
      */
     public function __construct()
     {
-        $this->analyzer = new Analyzer();
+        $this->analyzer = new Analyzer(new StringParser());
 
         parent::__construct();
     }
@@ -46,11 +47,11 @@ class AnalyzeCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $fileName = $input->getArgument('filename');
-        $environment = $input->getArgument('environment');
-        $count = $input->getArgument('count');
+        $environment = ucfirst($input->getArgument('environment'));
+        $count = ucfirst($input->getArgument('count'));
         $group = $input->getArgument('group');
 
-        $r = $this->analyzer->analyze($fileName, $environment);
+        $r = $this->analyzer->analyze($fileName, $environment, $count);
 
         // ... put here the code to create the user
 

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Analyzer\Service;
 
-use Analyzer\Service\EnvironmentRule\RuleInterface;
+use Analyzer\Service\EnvironmentRule\EnvironmentRuleInterface;
 use Exception;
 
 /**
@@ -14,20 +14,18 @@ use Exception;
 class StringParser
 {
     private const UPLOAD_FOLDER = '/upload/';
+    private EnvironmentRuleInterface $environmentRule;
 
     /**
      * @param string $fileName
-     * @param string $environment
      *
      * @return array
-     * @throws Exception
      */
-    public function getDataForAnalyze(string $fileName, string $environment): array
+    public function getDataForAnalyze(string $fileName): array
     {
         $text = $this->readFile($fileName);
-        $environmentRule = $this->getEnvironmentRule($environment);
 
-        return $environmentRule->getEnvironment($text);
+        return $this->environmentRule->getEnvironment($text);
     }
 
     /**
@@ -42,6 +40,7 @@ class StringParser
 
     /**
      * @param string $fileName
+     *
      * @return string
      */
     private function readFile(string $fileName): string
@@ -52,10 +51,10 @@ class StringParser
     /**
      * @param string $environment
      *
-     * @return RuleInterface
+     * @return $this
      * @throws Exception
      */
-    private function getEnvironmentRule(string $environment): RuleInterface
+    public function setEnvironmentRule(string $environment): self
     {
         $environmentWithNameSpace = 'Analyzer\\Service\\EnvironmentRule\\' . $environment;
 
@@ -64,8 +63,16 @@ class StringParser
             throw new Exception('Not supported environment: ' . $environment);
         }
 
-        $r = new $environmentWithNameSpace();
+        $this->environmentRule = new $environmentWithNameSpace();
 
-        return new $environmentWithNameSpace();
+        return $this;
+    }
+
+    /**
+     * @return EnvironmentRuleInterface
+     */
+    public function getEnvironmentRule(): EnvironmentRuleInterface
+    {
+        return $this->environmentRule;
     }
 }

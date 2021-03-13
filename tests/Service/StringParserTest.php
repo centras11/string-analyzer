@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Analyzer\Tests\Service;
 
-use Analyzer\Service\EnvironmentRule\RuleInterface;
+use Analyzer\Service\EnvironmentRule\EnvironmentRuleInterface;
 use Analyzer\Service\StringParser;
 use Analyzer\Tests\InvokeMethodTrait;
 use Exception;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Class CalculatorControllerTest
- * @package CommissionTask\Tests\Controller
+ * Class StringParserTest
+ * @package Analyzer\Tests\Service
  */
 class StringParserTest extends TestCase
 {
@@ -27,6 +27,9 @@ class StringParserTest extends TestCase
         $this->stringParser = new StringParser();
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testMustReturnFullPath(): void
     {
         $fileName = 'test.txt';
@@ -36,6 +39,9 @@ class StringParserTest extends TestCase
         self::assertSame($fullPath, $return);
     }
 
+    /**
+     * @throws \ReflectionException
+     */
     public function testMustReadFileContent(): void
     {
         $fileName = 'sample.txt';
@@ -49,23 +55,22 @@ class StringParserTest extends TestCase
     /**
      * @param string $environment
      * @dataProvider provideCorrectEnvironments
-     * @throws \ReflectionException
+     * @throws Exception
      */
     public function testMustGetCorrectEnvironmentRule(string $environment): void
     {
-        $return = $this->invokeMethod($this->stringParser, 'getEnvironmentRule', [$environment]);
-        self::assertInstanceOf(RuleInterface::class, $return);
+        $return = $this->stringParser->setEnvironmentRule($environment);
+        self::assertInstanceOf(EnvironmentRuleInterface::class, $return->getEnvironmentRule());
     }
 
     /**
      * @param string $environment
      * @dataProvider provideWrongEnvironments
-     * @throws \ReflectionException
      */
     public function testMustThrowExceptionIfNotSupportedEnvironment(string $environment): void
     {
         $this->expectException(Exception::class);
-        $this->invokeMethod($this->stringParser, 'getEnvironmentRule', [$environment]);
+        $this->stringParser->setEnvironmentRule($environment);
     }
 
     /**
@@ -77,7 +82,8 @@ class StringParserTest extends TestCase
      */
     public function testMustProvideCorrectData(string $environment, string $firstResult, int $resultCount): void
     {
-        $return = $this->stringParser->getDataForAnalyze('sample.txt', $environment);
+        $this->stringParser->setEnvironmentRule($environment);
+        $return = $this->stringParser->getDataForAnalyze('sample.txt');
         self::assertSame($firstResult, $return[0]);
         self::assertCount($resultCount, $return);
     }
@@ -89,9 +95,7 @@ class StringParserTest extends TestCase
     {
         return [
             ['Text'],
-            ['text'],
             ['Line'],
-            ['line'],
         ];
     }
 

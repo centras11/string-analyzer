@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Analyzer\Service\EnvironmentRule;
 
 /**
- * Interface RuleInterface
+ * Interface EnvironmentRuleInterface
  * @package Analyzer\Service\EnvironmentRule
  */
-interface RuleInterface
+interface EnvironmentRuleInterface
 {
     /**
      * @param string $text
