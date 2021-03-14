@@ -39,7 +39,7 @@ class AnalyzerView
         $this->symfonyStyle->title('String Analyzer');
 
         foreach ($groups as $group) {
-            $outputGroup = $this->getEnvironmentRule(ucfirst($group));
+            $outputGroup = $this->getGroupRule(ucfirst($group));
             $this->symfonyStyle->title($outputGroup->getTitle());
             $this->symfonyStyle->table(['count', 'value'], $outputGroup->getData($data));
         }
@@ -51,7 +51,7 @@ class AnalyzerView
      * @return GroupInterface
      * @throws Exception
      */
-    private function getEnvironmentRule(string $groupName): GroupInterface
+    private function getGroupRule(string $groupName): GroupInterface
     {
         $groupWithNameSpace = 'Analyzer\\View\\Group\\' . $groupName;
 

@@ -16,5 +16,8 @@ $application = new Application();
 $application->add($command);
 $application->setDefaultCommand($command->getName(), true);
 
-
-$application->run();
+try {
+    $application->run();
+} catch (Exception $exception) {
+    echo 'Error accrued: ' . $exception->getMessage();
+}
